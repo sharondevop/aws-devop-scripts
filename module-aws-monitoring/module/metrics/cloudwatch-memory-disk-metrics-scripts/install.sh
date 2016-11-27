@@ -1,5 +1,3 @@
-#!/bin/bash
-
 ################################################################################                                                                               
 # Send memory usage and disk metrics to Amazon CloudWatch
 #  
@@ -10,4 +8,60 @@
 # You are free to use, modify and redistribute this software in any form
 # under the conditions described in the LICENSE file included.
 ################################################################################
+!/bin/bash
 
+# select the local disk on wich to report to Cloudwatch, we pass the mount point as parameters.
+DISKPATH=$(df -l --type={xfs,ext4} | grep ^/dev | awk '{print "--disk-path="$6 }' | paste -sd ' ')
+# Crontask command add to  ec2-user crontab
+CRONTASK="*/5 * * * * /opt/aws-scripts-mon/mon-put-instance-data.pl --mem-util --mem-used --mem-avail --disk-space-util  $DISKPATH  --from-cron"
+# Tell Cronjob where to save the crontask
+CRONFILE="/var/spool/cron/ec2-user"
+
+echo "--> Installing Prerequsite package for cloudwatch monitor"
+sudo yum install perl-Switch perl-DateTime perl-Sys-Syslog perl-LWP-Protocol-https perl-Digest-SHA -y
+sudo yum install perl-IO-Socket-SSL -y
+sudo yum install zip unzip -y
+sudo curl -L https://raw.githubusercontent.com/miyagawa/cpanminus/master/cpanm | perl - App::cpanminus
+sudo /home/ec2-user/perl5/bin/cpanm LWP::Protocol::https
+sudo /home/ec2-user/perl5/bin/cpanm Switch
+##################################################
+echo "--> Cleaning cpanm files"
+sudo rm -rf /home/ec2-user/.cpanm/
+sudo rm -rf /home/ec2-user/.cpan/
+sudo rm -rf /home/ec2-user/perl5/
+##################################################
+echo "--> Downloading, install, and configure the script"
+sudo curl http://aws-cloudwatch.s3.amazonaws.com/downloads/CloudWatchMonitoringScripts-1.2.1.zip -O
+sudo unzip -o  CloudWatchMonitoringScripts-1.2.1.zip -d /opt
+sudo rm -f CloudWatchMonitoringScripts-1.2.1.zip
+
+
+
+
+# Checking if awscreds.conf exists , if exists createing a  backup
+if [ -f /opt/aws-scripts-mon/awscreds.conf ]; then
+ 	sudo  mv /opt/aws-scripts-mon/awscreds.conf /opt/aws-scripts-mon/awscreds.bak
+fi
+
+# Checking if awscreds.sample exists , if exists rename it awscreds.conf
+if [ -f /opt/aws-scripts-mon/awscreds.template ]; then
+ 	sudo  mv /opt/aws-scripts-mon/awscreds.template /opt/aws-scripts-mon/awscreds.conf
+else
+   	echo "awscreds.template not exists, please set awscreds key if you are not using AMI role"
+fi
+
+# Test that communication to Cloudwatch works , and  set a cronjob  schedule for metrics reported to CloudWatch
+/opt/aws-scripts-mon/mon-put-instance-data.pl --mem-util --verify --verbose
+if [ $? -eq 0 ]
+then
+     	echo "Test OK, I'm now configure cronjob for ec2-user , with the following command, to  run every 5 minute."
+else
+   	echo "Faild to test communication to Cloudwatch" >&2
+fi
+# set a cronjob  schedule for metrics reported to CloudWatch
+if [ "$(sudo grep -c "/opt/aws-scripts-mon/mon-put-instance-data.pl" "$CRONFILE")" -eq 0 ]
+then
+	echo "$CRONTASK" | sudo tee -a "$CRONFILE"
+else
+   	echo "Crontask exists" >&2
+fi
