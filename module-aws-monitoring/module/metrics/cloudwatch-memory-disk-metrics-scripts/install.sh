@@ -1,4 +1,5 @@
-################################################################################                                                                               
+!/bin/bash
+################################################################################                                                                            
 # Send memory usage and disk metrics to Amazon CloudWatch
 #  
 # This is intended to run on an Amazon EC2 instance and requires an IAM
@@ -8,7 +9,6 @@
 # You are free to use, modify and redistribute this software in any form
 # under the conditions described in the LICENSE file included.
 ################################################################################
-!/bin/bash
 
 # select the local disk on wich to report to Cloudwatch, we pass the mount point as parameters.
 DISKPATH=$(df -l --type={xfs,ext4} | grep ^/dev | awk '{print "--disk-path="$6 }' | paste -sd ' ')
