@@ -79,5 +79,5 @@ if [ "$(sudo grep -c "/opt/aws-scripts-mon/mon-put-instance-data.pl" "$CRONFILE"
 then
 	echo "$CRONTASK" | sudo tee -a "$CRONFILE"
 else
-   	echo "Crontask exists" >&2
+   	echo "--> crontask are now  set for Disk monitoring." >&2
 fi
