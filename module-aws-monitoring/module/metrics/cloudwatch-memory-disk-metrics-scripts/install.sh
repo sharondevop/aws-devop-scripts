@@ -17,14 +17,14 @@ CRONTASK="*/5 * * * * /opt/aws-scripts-mon/mon-put-instance-data.pl --mem-util -
 # Tell Cronjob where to save the crontask
 CRONFILE="/var/spool/cron/ec2-user"
 
-# Test if ec2-user cronfile exists ,if not create it.
+echo "--> Testing if "$CRONFILE" exists ,if not I will create it for you."
 sudo test -e "$CRONFILE"
 if [ "$?" -eq 0  ]
 then
-     echo "You have a ec2-user crontask file. Things are fine."
+     echo "--> You have a "$CRONFILE" file. Things are fine."
 
 else
-     echo "No file found,I will create ec2-user crontask file."
+     echo "--> No file found, I am now  creating  ec2-user crontask file in here "$CRONFILE"."
      sudo touch "$CRONFILE"  # create the file
      sudo chmod 600 "$CRONFILE" # set rw permissions
      sudo chown ec2-user:ec2-user "$CRONFILE" # update owner and group
