@@ -17,6 +17,20 @@ CRONTASK="*/5 * * * * /opt/aws-scripts-mon/mon-put-instance-data.pl --mem-util -
 # Tell Cronjob where to save the crontask
 CRONFILE="/var/spool/cron/ec2-user"
 
+# Test if ec2-user cronfile exists ,if not create it.
+sudo test -e "$CRONFILE"
+if [ "$?" -eq 0  ]
+then
+     echo "You have a ec2-user crontask file. Things are fine."
+
+else
+     echo "No file found,I will create ec2-user crontask file."
+     sudo touch "$CRONFILE"  # create the file
+     sudo chmod 600 "$CRONFILE" # set rw permissions
+     sudo chown ec2-user:ec2-user "$CRONFILE" # update owner and group
+fi
+
+####################################################################
 echo "--> Installing Prerequsite package for cloudwatch monitor"
 sudo yum install perl-Switch perl-DateTime perl-Sys-Syslog perl-LWP-Protocol-https perl-Digest-SHA -y
 sudo yum install perl-IO-Socket-SSL -y
@@ -24,18 +38,20 @@ sudo yum install zip unzip -y
 sudo curl -L https://raw.githubusercontent.com/miyagawa/cpanminus/master/cpanm | perl - App::cpanminus
 sudo /home/ec2-user/perl5/bin/cpanm LWP::Protocol::https
 sudo /home/ec2-user/perl5/bin/cpanm Switch
+
+
 ##################################################
 echo "--> Cleaning cpanm files"
 sudo rm -rf /home/ec2-user/.cpanm/
 sudo rm -rf /home/ec2-user/.cpan/
 sudo rm -rf /home/ec2-user/perl5/
+
+
 ##################################################
 echo "--> Downloading, install, and configure the script"
 sudo curl http://aws-cloudwatch.s3.amazonaws.com/downloads/CloudWatchMonitoringScripts-1.2.1.zip -O
 sudo unzip -o  CloudWatchMonitoringScripts-1.2.1.zip -d /opt
 sudo rm -f CloudWatchMonitoringScripts-1.2.1.zip
-
-
 
 
 # Checking if awscreds.conf exists , if exists createing a  backup
