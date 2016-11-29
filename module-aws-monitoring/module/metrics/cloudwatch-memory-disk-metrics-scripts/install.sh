@@ -80,6 +80,9 @@ then
     exit 1
 fi
 
+# Downloading and configure aws-cloudwatch script.
+install_cloudwatch
+
 # Create cronfile, if not exists.
 echo "--> Testing if "$cronfile" exists ,if not I will create it for you."
 sudo test -e "$cronfile"
