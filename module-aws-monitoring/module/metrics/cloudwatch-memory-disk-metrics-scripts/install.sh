@@ -23,7 +23,7 @@ cronfile="/var/spool/cron/ec2-user"
 # Define a function to install Prerequisite packages on Centos\Redhat platforms.
 centos_sys()
 {
-	echo "--> Installing Prerequsite package for cloudwatch monitor"
+	echo "--> Installing cloudwatch monitor prerequisite package for Centos\Redhat platforms. "
 	sudo yum install perl-Switch perl-DateTime perl-Sys-Syslog perl-LWP-Protocol-https perl-Digest-SHA -y
 	sudo yum install perl-IO-Socket-SSL -y
 	sudo yum install zip unzip -y
@@ -41,6 +41,7 @@ centos_sys()
 # Define a function to install Prerequisite packages on Ubuntu platforms.
 ubuntu_sys()
 {
+	echo "--> Installing cloudwatch monitor prerequisite package for Ubuntu platforms. "
 	sudo apt-get install unzip -y
 	sudo apt-get install libwww-perl libdatetime-perl -y
 	
