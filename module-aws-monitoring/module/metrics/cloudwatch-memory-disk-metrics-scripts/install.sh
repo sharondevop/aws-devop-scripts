@@ -13,7 +13,7 @@
 # select the local disk on wich to report to Cloudwatch, we pass the mount point as parameters.
 DISKPATH=$(df -l --type={xfs,ext4} | grep ^/dev | awk '{print "--disk-path="$6 }' | paste -sd ' ')
 # Crontask command add to  ec2-user crontab
-CRONTASK="*/5 * * * * /opt/aws-scripts-mon/mon-put-instance-data.pl --mem-util --mem-used --mem-avail --disk-space-util  $DISKPATH  --from-cron"
+CRONTASK="*/5 * * * * /opt/aws-scripts-mon/mon-put-instance-data.pl --mem-util --mem-used --mem-avail --disk-space-util $DISKPATH --from-cron"
 # Tell Cronjob where to save the crontask
 CRONFILE="/var/spool/cron/ec2-user"
 
@@ -67,12 +67,12 @@ else
 fi
 
 # Test that communication to Cloudwatch works , and  set a cronjob  schedule for metrics reported to CloudWatch
-/opt/aws-scripts-mon/mon-put-instance-data.pl --mem-util --verify --verbose
+/opt/aws-scripts-mon/mon-put-instance-data.pl --mem-util --mem-used --mem-avail
 if [ $? -eq 0 ]
 then
      	echo "Test OK, I'm now configure cronjob for ec2-user , with the following command, to  run every 5 minute."
 else
-   	echo "Faild to test communication to Cloudwatch" >&2
+   	echo "--> Failed to test communication to Cloudwatch" >&2
 fi
 # set a cronjob  schedule for metrics reported to CloudWatch
 if [ "$(sudo grep -c "/opt/aws-scripts-mon/mon-put-instance-data.pl" "$CRONFILE")" -eq 0 ]
