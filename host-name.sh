@@ -1,6 +1,14 @@
 #!/bin/bash
-# the script set ec2-instance name using new variable name NICKNAME.
+################################################################################                                                                            
+# setup linux OS name using new variable name NICKNAME.
 # this allow us to save the underline hostname used.
+# example:  ip-172-12-12-3.eu-west-1.compute.internal.
+# This is intended to run on an Amazon EC2 instance and require sudo 
+# permission and hostname argument supplied.
+# (c) 2016 Sharon Mafgaoker, all rights reserved; 
+# You are free to use, modify and redistribute this software in any form
+# under the conditions described in the LICENSE file included.
+#################################################################################
 
 # Function for checking if script running as root, if not terminating.
 func_check_for_root() {
@@ -12,7 +20,7 @@ func_check_for_root() {
 
 # Check existence of input argument.
 if [ "$#" -eq "0" ] ; then
-    echo "ERROR: No hostname arguments supplied, Script terminating."; exit 7
+    echo "ERROR: No hostname argument supplied, Script terminating."; exit 7
 fi
 
 # set the name
