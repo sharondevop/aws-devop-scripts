@@ -41,7 +41,7 @@ fi
 # backup the original file  /etc/bashrc 
 # Replace PS1 h in /etc/bashrc with $NICKNAME ,substitutions using sed
 if [ -e /etc/bashrc ]; then
-      sed -i.bak '/&&\sPS1="\[.u@.h\s /s/h/$NICKNAME/' /etc/bashrc > /dev/null 
+      sed -i.bak '/&&\sPS1="\[.u@.h\s/s/h/$NICKNAME/' /etc/bashrc > /dev/null 
 else
      echo "ERROR: /etc/bashrc File does not exist or you don't have permission to edit the file"
      exit 1
