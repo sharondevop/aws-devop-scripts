@@ -65,6 +65,30 @@ return 0
 #not set
 }
 
+func_run_for_rhel(){
+# sets the terminal title to username@hostname: directory:
+echo '''echo -ne "\033]0;${USER}@${NICKNAME}: ${PWD}\007"''' > /etc/sysconfig/bash-prompt-xterm
+chmod +x /etc/sysconfig/bash-prompt-xterm
+
+# Patterns to find in the file
+# '&&\sPS1="\[.u@.h\s'
+if grep -q '&&\sPS1="\[.u@.$NICKNAME\s' /etc/bashrc; then
+   echo "\$NICKNAME  exists in /etc/bashrc"
+   exit 0
+fi
+
+# backup the original file  /etc/bashrc 
+# Replace PS1 h in /etc/bashrc with $NICKNAME ,substitutions using sed
+if [ -e /etc/bashrc ]; then
+      sed -i.bak '/&&\sPS1="\[.u@.h\s/s/h/$NICKNAME/' /etc/bashrc > /dev/null 
+else
+     echo "ERROR: /etc/bashrc File does not exist or you don't have permission to edit the file"
+     exit 1
+fi
+echo "You are ready to go, please logout to see the changes."
+return 0
+}
+
 # Getting the distribution name, checking for Ubuntu or Redhat.
 UNAME=$(uname | tr "[:upper:]" "[:lower:]")
 # If Linux, try to determine specific distribution
@@ -93,27 +117,4 @@ elif [ "$DISTRO" == "rhel" ]; then
 else
    echo "ERROR: No Ubuntu found"; exit 7
 fi
-
-func_run_for_rhel(){
-# sets the terminal title to username@hostname: directory:
-echo '''echo -ne "\033]0;${USER}@${NICKNAME}: ${PWD}\007"''' > /etc/sysconfig/bash-prompt-xterm
-chmod +x /etc/sysconfig/bash-prompt-xterm
-
-# Patterns to find in the file
-# '&&\sPS1="\[.u@.h\s'
-if grep -q '&&\sPS1="\[.u@.$NICKNAME\s' /etc/bashrc; then
-   echo "\$NICKNAME  exists in /etc/bashrc"
-   exit 0
-fi
-
-# backup the original file  /etc/bashrc 
-# Replace PS1 h in /etc/bashrc with $NICKNAME ,substitutions using sed
-if [ -e /etc/bashrc ]; then
-      sed -i.bak '/&&\sPS1="\[.u@.h\s/s/h/$NICKNAME/' /etc/bashrc > /dev/null 
-else
-     echo "ERROR: /etc/bashrc File does not exist or you don't have permission to edit the file"
-     exit 1
-fi
-echo "You are ready to go, please logout to see the changes."
-return 0
-}
+exit 0
