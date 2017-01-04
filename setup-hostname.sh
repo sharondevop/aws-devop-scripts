@@ -60,9 +60,10 @@ func_run_for_ubuntu(){
          exit 7
      fi
 echo "You are ready to go, please logout to see the changes."
+
 return 0
-# Source env variable , to get immediate effect.
-#not set
+# Source env variable , to get immediate effect. not set for now.
+
 }
 
 func_run_for_rhel(){
@@ -73,7 +74,6 @@ chmod +x /etc/sysconfig/bash-prompt-xterm
 # Patterns to find in the file
 # '&&\sPS1="\[.u@.h\s'
 if grep -q '&&\sPS1="\[.u@.$NICKNAME\s' /etc/bashrc; then
-   echo "\$NICKNAME  exists in /etc/bashrc"
    exit 0
 fi
 
@@ -86,6 +86,7 @@ else
      exit 1
 fi
 echo "You are ready to go, please logout to see the changes."
+
 return 0
 }
 
