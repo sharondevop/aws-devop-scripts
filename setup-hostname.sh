@@ -58,7 +58,7 @@ func_run_for_ubuntu(){
             if ! grep -q '/etc/profile.d/prompt.sh' /etc/bash.bashrc; then
                 echo "/etc/profile.d/prompt.sh not exists in  /etc/bash.bashrc, I'm going to add it."
        # Execute the shell scripts  /etc/profile.d/prompts.sh if the users shell is Login Shell.
-                echo "# Execute the shell scripts /etc/profile.d/prompts.sh for Interactive Login Shell." >> /etc/bash.bashrc
+                echo "# Execute the shell scripts /etc/profile.d/prompts.sh for Non-interactive  Shells." >> /etc/bash.bashrc
                 echo ". /etc/profile.d/prompt.sh" >> /etc/bash.bashrc
             fi
      else 
