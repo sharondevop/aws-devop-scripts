@@ -55,12 +55,18 @@ func_run_for_ubuntu(){
        # backup the original file  /etc/bash.bashrc , and replace \h with $NICKNAME
              sed -i.bak '/PS1=/s/\\h/$NICKNAME/' /etc/bash.bashrc > /dev/null
          fi
+            if ! grep -q '/etc/profile.d/prompt.sh' /etc/bash.bashrc; then
+                echo "/etc/profile.d/prompt.sh not exists in  /etc/bash.bashrc, I'm going to add it."
+       # Execute the shell scripts  /etc/profile.d/prompts.sh if the users shell is Login Shell.
+                echo "# Execute the shell scripts /etc/profile.d/prompts.sh for Interactive Login Shell." >> /etc/bash.bashrc
+                echo ". /etc/profile.d/prompt.sh" >> /etc/bash.bashrc
+            fi
      else 
          echo "ERROR: /etc/bash.bashrc File does not exists or you don't have permission to edit the file"
          exit 7
      fi
-echo "You are ready to go, please logout to see the changes."
 
+echo "You are ready to go, please logout to see the changes."
 return 0
 # Source env variable , to get immediate effect. not set for now.
 
