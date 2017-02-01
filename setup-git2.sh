@@ -27,6 +27,7 @@ func_install_git() {
 	sudo yum -y  --enablerepo=ius install git2u
 	sudo yum -y install bash-completion
 	rm setup-ius.sh
+	rm setup-git2.sh
 
 exit 0
 }
