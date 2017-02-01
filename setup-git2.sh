@@ -17,16 +17,18 @@ func_check_for_root() {
 
 # Funcation for installing Git2
 func_install_git() {
-	# Set IUS repo 
-	curl -o enable-ius.sh https://setup.ius.io && chmod +x enable-ius.sh && ./enable-ius.sh 
+	# Download IUS Community Repository Shell script
+	curl 'https://setup.ius.io/' -o setup-ius.sh
+	# Install/Enable IUS Community Repositorya
+	sudo sh setup-ius.sh
 	# Remove old git
 	sudo yum -y remove git
 	# install  git
-	sudo yum -y install git2u
+	sudo yum -y  --enablerepo=ius install git2u
 	sudo yum -y install  bash-completiona
-	rm ./enable-ius.sh
+	rm setup-ius.sh
 
-exit 0 	
+exit 0
 }
 
 # Getting the distribution name, checking for Ubuntu or Redhat.
