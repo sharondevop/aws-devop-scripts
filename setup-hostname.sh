@@ -101,15 +101,15 @@ return 0
 UNAME=$(uname | tr "[:upper:]" "[:lower:]")
 # If Linux, try to determine specific distribution
 if [ "$UNAME" == "linux" ]; then
+    if [ -f /etc/redhat-release ]; then
+         DISTRO="rhel"
     # If available, use LSB to identify distribution
-    if [ -f /etc/lsb-release -o -d /etc/lsb-release.d ]; then
+    elif [ -f /etc/lsb-release -o -d /etc/lsb-release.d ]; then
          DISTRO=$(lsb_release -i | cut -d: -f2 | sed s/'^\t'// | tr "[:upper:]" "[:lower:]")
-     
+
     elif [ -f /etc/os-release ]; then
          DISTRO=$(awk -F= '/^ID=/{print $2}' /etc/os-release | sed s/'"'//g)
 
-    elif [ -f /etc/redhat-release ]; then
-         DISTRO="rhel"
     else
          echo "ERROR: No linux distro found"; exit 7
     fi
@@ -120,7 +120,7 @@ echo "$DISTRO found"
 if [ "$DISTRO" == "ubuntu" ]; then
    func_run_for_ubuntu
 
-elif [ "$DISTRO" == "rhel" ]; then
+elif [ "$DISTRO" == "rhel" -o "$DISTRO" == "redhatenterpriseserver" ]; then
     func_run_for_rhel
 else
    echo "ERROR: No Ubuntu found"; exit 7
