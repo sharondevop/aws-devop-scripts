@@ -1,6 +1,6 @@
 #!/bin/bash
 ################################################################################                                                                            
-#24/1/17
+# 24/1/17
 # setup linux OS name using new variable name NICKNAME.
 # this allow us to save the underline hostname used.
 # example:  ip-172-12-12-3.eu-west-1.compute.internal.
