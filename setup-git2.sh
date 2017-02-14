@@ -19,7 +19,7 @@ func_check_for_root() {
 func_install_git() {
 	# Download IUS Community Repository Shell script
 	curl 'https://setup.ius.io/' -o setup-ius.sh
-	# Install/Enable IUS Community Repositorya
+	# Install/Enable IUS Community Repository
 	sudo sh setup-ius.sh
 	# Remove old git
 	sudo yum -y remove git
