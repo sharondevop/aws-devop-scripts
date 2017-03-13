@@ -14,11 +14,11 @@
 # select the local disk on wich to report to Cloudwatch, we pass the mount point as parameter.
 diskpath=$(df -l --type={xfs,ext4} | grep ^/dev | awk '{print "--disk-path="$6 }' | paste -sd ' ')
 
-# Crontask command add to  ec2-user crontab
+# Crontask command to add to user crontab
 crontask="*/5 * * * * /opt/aws-scripts-mon/mon-put-instance-data.pl --mem-util --mem-used --mem-avail --disk-space-util "$diskpath" --from-cron"
 
 # Tell Cronjob where to save the crontask
-cronfile="/var/spool/cron/ec2-user"
+cronfile="/var/spool/cron/$USER"
 
 # Define a function to install Prerequisite packages on Centos\Redhat platforms.
 centos_sys()
@@ -91,10 +91,10 @@ if [[ "$?" -eq 0  ]]
 then
      echo "--> You have a "$cronfile" file. Things are fine."
 else
-     echo '--> No file found, I am now  creating  ec2-user crontask file in here "$cronfile".'
+     echo '--> No file found, I am now  creating  "$USER" crontask file in here "$cronfile".'
      sudo touch "$cronfile"  # create the file
      sudo chmod 600 "$cronfile" # set rw permissions
-     sudo chown ec2-user:ec2-user "$cronfile" # update owner and group
+     sudo chown "$USER":"$USER" "$cronfile" # update owner and group
 fi
 
 
@@ -118,7 +118,7 @@ fi
 /opt/aws-scripts-mon/mon-put-instance-data.pl --mem-util --mem-used --mem-avail
 if [ "$?" -eq 0 ]
 then
-     echo "Test OK, I'm now configure cronjob for ec2-user , with the following command, to  run every 5 minute."
+     echo "--> Test OK, I'm now configure cronjob for "$USER" , with the following command, to  run every 5 minute."
 else
     	echo "--> Failed to test communication to Cloudwatch" >&2
 fi
