@@ -104,7 +104,8 @@ fi
 /opt/aws-scripts-mon/mon-put-instance-data.pl --mem-util --mem-used --mem-avail
 if [ "$?" -eq 0 ]
 then
-     echo "--> Test OK, I'm now configure cronjob for "$USER" , with the following command "$crontask", to  run every 5 minute."
+     echo "--> Test OK, I'm now configure cronjob for "$USER" , with the following command, to  run every 5 minute."
+     echo "$crontask"
 else
     	echo "--> Failed to test communication to Cloudwatch" >&2
 fi
