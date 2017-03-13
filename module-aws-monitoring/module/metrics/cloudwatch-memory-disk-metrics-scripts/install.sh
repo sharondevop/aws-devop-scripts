@@ -18,7 +18,7 @@ diskpath=$(df -l --type={xfs,ext4} | grep ^/dev | awk '{print "--disk-path="$6 }
 crontask="*/5 * * * * /opt/aws-scripts-mon/mon-put-instance-data.pl --mem-util --mem-used --mem-avail --disk-space-util "$diskpath" --from-cron"
 
 # Tell Cronjob where to save the crontask
-cronfile="/var/spool/cron/$USER"
+tmpcronfile="/home/$USER/tmpcron"
 
 # Define a function to install Prerequisite packages on Centos\Redhat platforms.
 centos_sys()
@@ -85,17 +85,17 @@ fi
 install_cloudwatch
 
 # Create cronfile, if not exists.
-echo "--> Testing if "$cronfile" exists ,if not I will create it for you."
-sudo test -e "$cronfile"
-if [[ "$?" -eq 0  ]]
-then
-     echo "--> You have a "$cronfile" file. Things are fine."
-else
-     echo '--> No file found, I am now  creating  "$USER" crontask file in here "$cronfile".'
-     sudo touch "$cronfile"  # create the file
-     sudo chmod 600 "$cronfile" # set rw permissions
-     sudo chown "$USER":"$USER" "$cronfile" # update owner and group
-fi
+#echo "--> Testing if '$cronfile' exists ,if not I will create it for you."
+#sudo test -e "$cronfile"
+#if [[ "$?" -eq 0  ]]
+#then
+#     echo "--> You have a '$cronfile' file. Things are fine."
+#else
+#     echo "--> No file found, I am now creating '$USER' crontask file in here '$cronfile'."
+#     sudo touch "$cronfile"  # create the file
+#     sudo chmod 600 "$cronfile" # set rw permissions
+#     sudo chown "$USER":"$USER" "$cronfile" # update owner and group
+#fi
 
 
 # Checking if awscreds.conf exists , if exists createing a  backup
@@ -124,10 +124,12 @@ else
 fi
 
 
-# set a cronjob  schedule for metrics reported to CloudWatch
-if [ "$(sudo grep -c "/opt/aws-scripts-mon/mon-put-instance-data.pl" "$cronfile")" -eq 0 ]
+# set a cronjob schedule for metrics reported to CloudWatch
+crontab -l > "$tmpcronfile"
+if [ "$(grep -c "/opt/aws-scripts-mon/mon-put-instance-data.pl" "$tmpcronfile")" -eq 0 ]
 then
-	echo "$crontask" | sudo tee -a "$cronfile"
+	crontab -l | { cat; echo "$crontask"; } | crontab -
+	rm "$tmpcronfile"
 else
    	echo "--> crontask exists for Disk monitoring, Things are fine." >&2
 fi
