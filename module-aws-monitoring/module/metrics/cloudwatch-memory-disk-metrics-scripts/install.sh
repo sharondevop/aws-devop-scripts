@@ -84,20 +84,6 @@ fi
 # Downloading and configure aws-cloudwatch script.
 install_cloudwatch
 
-# Create cronfile, if not exists.
-#echo "--> Testing if '$cronfile' exists ,if not I will create it for you."
-#sudo test -e "$cronfile"
-#if [[ "$?" -eq 0  ]]
-#then
-#     echo "--> You have a '$cronfile' file. Things are fine."
-#else
-#     echo "--> No file found, I am now creating '$USER' crontask file in here '$cronfile'."
-#     sudo touch "$cronfile"  # create the file
-#     sudo chmod 600 "$cronfile" # set rw permissions
-#     sudo chown "$USER":"$USER" "$cronfile" # update owner and group
-#fi
-
-
 # Checking if awscreds.conf exists , if exists createing a  backup
 if [ -f /opt/aws-scripts-mon/awscreds.conf ]
 then
@@ -110,11 +96,11 @@ if [ -f /opt/aws-scripts-mon/awscreds.template ]
 then
  	 sudo  mv /opt/aws-scripts-mon/awscreds.template /opt/aws-scripts-mon/awscreds.conf
 else
-   	 echo "awscreds.template not exists, please set awscreds key if you are not using AMI role"
+   	 echo "--> awscreds.template not exists, please set awscreds key if you are not using AMI role"
 fi
 
 
-# Test that communication to Cloudwatch works , and  set a cronjob  schedule for metrics reported to CloudWatch
+# Test that communication to Cloudwatch works, and set a cronjob schedule for metrics reported to CloudWatch
 /opt/aws-scripts-mon/mon-put-instance-data.pl --mem-util --mem-used --mem-avail
 if [ "$?" -eq 0 ]
 then
@@ -123,11 +109,11 @@ else
     	echo "--> Failed to test communication to Cloudwatch" >&2
 fi
 
-
 # set a cronjob schedule for metrics reported to CloudWatch
 crontab -l > "$tmpcronfile"
 if [ "$(grep -c "/opt/aws-scripts-mon/mon-put-instance-data.pl" "$tmpcronfile")" -eq 0 ]
 then
+	echo "--> Setting crontask for Disk monitoring"
 	crontab -l | { cat; echo "$crontask"; } | crontab -
 	rm "$tmpcronfile"
 else
