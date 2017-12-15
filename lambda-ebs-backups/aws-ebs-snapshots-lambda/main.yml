@@ -1,0 +1,13 @@
+---
+# defaults file for aws-ebs-snapshots-lambda
+
+- name: Create aws-ebs-snapshots-lambda
+  hosts: localhost
+  vars_files:
+   - vars/aws-creds.yml
+#   - vars/vars.yml
+  connection: local
+  tasks:
+
+  roles:
+  - ebs-snapshots

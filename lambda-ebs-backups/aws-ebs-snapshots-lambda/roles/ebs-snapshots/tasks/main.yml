@@ -1,0 +1,24 @@
+---
+- name: Create a role
+  iam_role:
+    aws_access_key: '{{ ec2_access_key }}'
+    aws_secret_key: '{{ ec2_secret_key }}'
+    name: ebs-snapshots-role
+    assume_role_policy_document: "{{ lookup('file', 'files/snapshot-trust.json') }}"
+    state: present
+  register: iam_info
+
+- name: Assign a policy called snapshot-policy.json to the ebs-snapshots-role
+  iam_policy:
+    aws_access_key: '{{ ec2_access_key }}'
+    aws_secret_key: '{{ ec2_secret_key }}'
+    iam_type: role
+    iam_name: ebs-snapshots-role
+    policy_name: snapshot-policy
+    state: present
+    policy_json: "{{ lookup('file', 'files/snapshot-policy.json') }}"
+
+
+
+
+
